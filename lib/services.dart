@@ -69,10 +69,10 @@ class Services {
       List<dynamic> peopleUrl = planetSelected['residents'];
 
       // Verificar si hay residentes en el planeta
-      // bool residentsAlive = false;
+      bool residentsAlive = false;
 
       for (String url in peopleUrl) {
-        // residentsAlive = true;
+        residentsAlive = true;
         responsePeople = (await getConnection().read(Uri.parse(url)));
 
         Map<String, dynamic> peopleSelected = jsonDecode(responsePeople);
@@ -85,6 +85,10 @@ class Services {
             peopleSelected['gender'],
             peopleSelected['birth_year']);
         peopleList.add(newPeople);
+      }
+
+      if (!residentsAlive) {
+        print("There are no residents on this planet.");
       }
 
       // Devuelve el listado de personas.

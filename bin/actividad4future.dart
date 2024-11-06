@@ -18,14 +18,16 @@ Future<void> main(List<String> arguments) async {
     planetList = await service.getStarWarsPlanets();
 
     // Tratamiento de datos de forma individual
+    int counter = 1;
     for (Planet item in planetList) {
       print(
-          "The planet ${item.getName()} has a diameter of ${item.getDiameter()} kms, gravity: ${item.getGravity()}, climate: ${item.getClimate()} and terrain(s): ${item.getTerrain()}");
+          "$counter. The planet ${item.getName()} has a diameter of ${item.getDiameter()} kms, gravity: ${item.getGravity()}, climate: ${item.getClimate()} and terrain(s): ${item.getTerrain()}");
+      counter++;
     }
 
     print("-----");
 
-    // Ahora es el momento de pedir al usuario que elija un planeta
+    // El usuario tiene que elegir un planeta
     print("2. List of residents of a planet");
     print(
         "Which planet do you want to see the residents of? (Choose one of the planets above)");
