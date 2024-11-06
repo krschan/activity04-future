@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 class Services {
   final String STAR_WARS_API_URL = 'https://swapi.dev/api/';
   late RetryClient connection;
-  List<String> residentsUrlList = [];
 
   Services() {
     setConnection();
@@ -63,10 +62,10 @@ class Services {
           .read(Uri.parse('${STAR_WARS_API_URL}planets/$planetId')));
 
       // Tratar el resultado
-      Map<String, dynamic> planetSelected = jsonDecode(responsePlanet);
+      Map<String, dynamic> planetMap = jsonDecode(responsePlanet);
 
       // Verificar si 'residents' es null o no existe
-      List<dynamic> peopleUrl = planetSelected['residents'];
+      List<dynamic> peopleUrl = planetMap['residents'];
 
       // Verificar si hay residentes en el planeta
       bool residentsAlive = false;
@@ -75,15 +74,15 @@ class Services {
         residentsAlive = true;
         responsePeople = (await getConnection().read(Uri.parse(url)));
 
-        Map<String, dynamic> peopleSelected = jsonDecode(responsePeople);
+        Map<String, dynamic> peopleMap = jsonDecode(responsePeople);
 
-        // Aquí no necesitas 'results', ya que cada URL devuelve un objeto de persona
+        // Guardar la información seleccionada en una lista
         People newPeople = People(
-            peopleSelected['name'],
-            int.parse(peopleSelected['height']),
-            peopleSelected['hair_color'],
-            peopleSelected['gender'],
-            peopleSelected['birth_year']);
+            peopleMap['name'],
+            int.parse(peopleMap['height']),
+            peopleMap['hair_color'],
+            peopleMap['gender'],
+            peopleMap['birth_year']);
         peopleList.add(newPeople);
       }
 
@@ -96,5 +95,72 @@ class Services {
       print("Error obtaining residents: $error");
     }
     return peopleList;
+  }
+
+  Future<List<People>> getStarWarsAllResidents() async {
+    List<People> peopleList = [];
+    late String responsePlanet;
+
+    // Conexión con el API
+    try {
+      responsePlanet =
+          (await getConnection().read(Uri.parse('${STAR_WARS_API_URL}people')));
+
+      // Tratar el resultado
+      Map<String, dynamic> peopleMap = jsonDecode(responsePlanet);
+
+      // Guardar la información seleccionada en una lista
+      peopleMap['results'].forEach((value) {
+        People newPeople = People(value['name'], int.parse(value['height']),
+            value['hair_color'], value['gender'], value['birth_year']);
+        peopleList.add(newPeople);
+      });
+
+      // Devuelve el listado de personas.
+    } catch (error) {
+      print("Error obtaining residents: $error");
+    }
+    return peopleList;
+  }
+
+  Future<List<Planet>> getStarWarsHomeworld(String characterElection) async {
+    late String responsePeople;
+    late String responseHomeworld;
+    List<Planet> homeworldList = [];
+    late String homeworldUrl;
+
+    // Conexión con el API
+    try {
+      responsePeople =
+          (await getConnection().read(Uri.parse('${STAR_WARS_API_URL}people')));
+      // Tratar el resultado
+      Map<String, dynamic> people = jsonDecode(responsePeople);
+
+      // Iterar sobre los resultados para encontrar el personaje seleccionado
+      for (var character in people['results']) {
+        if (character['name'] == characterElection) {
+          homeworldUrl = character['homeworld'];
+          break; // Salir del bucle una vez encontrado el personaje
+        }
+      }
+
+      // Verificar si se encontró el homeworld
+      responseHomeworld = (await getConnection().read(Uri.parse(homeworldUrl)));
+
+      Map<String, dynamic> homeworldMap = jsonDecode(responseHomeworld);
+
+      Planet newPlanet = Planet(
+          homeworldMap['name'],
+          int.parse(homeworldMap['diameter']),
+          homeworldMap['climate'],
+          homeworldMap['gravity'],
+          homeworldMap['terrain']);
+      homeworldList.add(newPlanet);
+    } catch (error) {
+      print("Error obtaining planet: $error");
+    }
+
+    // Devuelve el listado de planetas.
+    return homeworldList;
   }
 }
