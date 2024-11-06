@@ -81,6 +81,7 @@ class Services {
         People newPeople = People(
             peopleSelected['name'],
             int.parse(peopleSelected['height']),
+            peopleSelected['hair_color'],
             peopleSelected['gender'],
             peopleSelected['birth_year']);
         peopleList.add(newPeople);
@@ -88,7 +89,7 @@ class Services {
 
       // Devuelve el listado de personas.
     } catch (error) {
-      print("Error al obtener residentes: $error");
+      print("Error obtaining residents: $error");
     }
     return peopleList;
   }

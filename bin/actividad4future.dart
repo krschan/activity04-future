@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:actividad4future/people.dart';
 import 'package:actividad4future/planet.dart';
@@ -19,17 +20,16 @@ Future<void> main(List<String> arguments) async {
     // Tratamiento de datos de forma individual
     for (Planet item in planetList) {
       print(
-          "El planeta ${item.getName()} tiene ${item.getDiameter()}Kms de diámetro y gravedad: ${item.getGravity()}");
+          "The planet ${item.getName()} has a diameter of ${item.getDiameter()} kms, gravity: ${item.getGravity()}, climate: ${item.getClimate()} and terrain(s): ${item.getTerrain()}");
     }
 
     print("-----");
 
     // Ahora es el momento de pedir al usuario que elija un planeta
-    print("2. Listado de habitantes de un planeta");
+    print("2. List of residents of a planet");
     print(
-        "¿Qué planeta quieres ver sus habitantes? (Elige uno de los planetas de arriba)");
-    String planetElection = "1";
-    // String planetElection = stdin.readLineSync()!;
+        "Which planet do you want to see the residents of? (Choose one of the planets above)");
+    String planetElection = stdin.readLineSync()!;
     int planetId = int.parse(planetElection);
 
     // Obtener los residentes del planeta elegido
@@ -37,7 +37,7 @@ Future<void> main(List<String> arguments) async {
 
     for (People item in peopleList) {
       print(
-          "El habitante ${item.getName()} tiene ${item.getHeight()} de altura y pesa:");
+          "The inhabitant ${item.getName()} is ${item.getHeight()} tall, has hair color: ${item.getHair()}, gender: ${item.getGender()} and was born in the year: ${item.getBirth()}");
     }
   } catch (error) {
     print("Error: $error");
